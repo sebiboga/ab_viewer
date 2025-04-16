@@ -1,4 +1,3 @@
-@ -0,0 +1,300 @@
 <!DOCTYPE html>
 <html>
 <head>
@@ -133,7 +132,7 @@
           startTime: extractValue(lines, 'Test started at:'),
           duration: extractValue(lines, 'Run time (sec):'),
           concurrency: extractValue(lines, 'Workload (concurrency):'),
-          targetUrl: extractValue(lines, 'Target URL:'),
+          targetUrl: text.match(/Target URL:\s*(.+)/)[1].trim(),
           serverSoftware: extractValue(lines, 'Server Software:'),
           completeRequests: extractValue(lines, 'Complete requests:'),
           failedRequests: extractValue(lines, 'Failed requests:'),
