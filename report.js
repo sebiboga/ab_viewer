@@ -28,7 +28,6 @@ async function parseResults() {
         max: extractConnectionTime(lines, 'max')
       },
       percentiles: extractPercentiles(lines),
-      // Add ApacheBench version info here
       serverInfo: {
         apacheBench: {
           version: versionMatch ? versionMatch[1] : 'Unknown',
@@ -44,8 +43,6 @@ async function parseResults() {
     return null;
   }
 }
-
-
 
 function extractValue(lines, pattern, isSecondOccurrence = false) {
   let found = false;
@@ -106,8 +103,6 @@ async function generateReport() {
   const testData = await parseResults();
   if (!testData) return;
 
-
-
   document.getElementById('version').textContent = testData.serverInfo.apacheBench.version;
   document.getElementById('revision').textContent = testData.serverInfo.apacheBench.revision;
 
@@ -141,12 +136,13 @@ async function generateReport() {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('reportContent').style.display = 'block';
 
-  // Percentile Chart
+  // Percentile Chart with animations disabled for PDF compatibility
   const ctx = document.getElementById('percentileChart').getContext('2d');
   const labels = Object.keys(testData.percentiles);
   const data = Object.values(testData.percentiles);
 
-  new Chart(ctx, {
+  // Store chart globally for PDF.js access if needed
+  window.myChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
@@ -159,6 +155,7 @@ async function generateReport() {
       }]
     },
     options: {
+      animation: false, // <--- disables all animations [5][6][7]
       responsive: true,
       plugins: {
         title: {
