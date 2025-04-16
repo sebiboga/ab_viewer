@@ -6,7 +6,7 @@
           const lines = text.split('\n');
           
           const parsedData = {
-            startTime: startTime: extractDateTimeValue(lines, 'Test started at:'),
+            startTime: extractDateTimeValue(lines, 'Test started at:'),
             duration: extractValue(lines, 'Run time (sec):'),
             concurrency: extractValue(lines, 'Workload (concurrency):'),
             targetUrl: text.match(/Target URL:\s*(.+)/)[1].trim(),
