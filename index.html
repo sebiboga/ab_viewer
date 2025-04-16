@@ -31,7 +31,6 @@
     }
     .chart-container {
       margin-top: 30px;
-      height: 400px;
     }
     table {
       width: 100%;
@@ -101,7 +100,7 @@
           <th>Min</th>
           <th>Mean</th>
           <th>Median</th>
-          <th>Max (100%)</th>
+          <th>Max</th>
         </tr>
         <tr>
           <td id="connMin"></td>
@@ -147,15 +146,10 @@
             min: extractConnectionTime(lines, 'min'),
             mean: extractConnectionTime(lines, 'mean'),
             median: extractConnectionTime(lines, 'median'),
-            max: extractPercentile(lines, '100%')
+            max: extractConnectionTime(lines, 'max')
           },
           percentiles: extractPercentiles(lines)
         };
-
-        // Remove 100% from percentiles
-        if (parsedData.percentiles['100%']) {
-          delete parsedData.percentiles['100%'];
-        }
 
         return parsedData;
       } catch (error) {
@@ -171,6 +165,7 @@
       for (const line of lines) {
         if (line.includes(pattern)) {
           if (isSecondOccurrence && found) {
+            // Return value after last colon or bracket
             const value = line.split(':').pop().trim().split(' ')[0];
             return parseNumber(value);
           } else if (!isSecondOccurrence) {
@@ -187,6 +182,7 @@
       const line = lines.find(l => l.includes('Connection Times') || l.includes('Total:'));
       if (!line) return 0;
       
+      // Find the line with connection times
       const timesLine = lines[lines.indexOf(line) + 2];
       if (!timesLine) return 0;
       
@@ -195,21 +191,9 @@
         case 'min': return parseInt(parts[1]);
         case 'mean': return parseInt(parts[2]);
         case 'median': return parseInt(parts[4]);
+        case 'max': return parseInt(parts[5]);
         default: return 0;
       }
-    }
-
-    function extractPercentile(lines, percentile) {
-      const startIndex = lines.findIndex(l => l.includes('Percentage of the requests'));
-      if (startIndex === -1) return 0;
-      
-      for (let i = startIndex + 1; i < lines.length; i++) {
-        if (lines[i].includes(percentile)) {
-          const value = lines[i].split(percentile)[1].trim().split(' ')[0];
-          return parseInt(value);
-        }
-      }
-      return 0;
     }
 
     function extractPercentiles(lines) {
@@ -219,7 +203,6 @@
       const percentiles = {};
       for (let i = startIndex + 1; i < lines.length; i++) {
         if (lines[i].trim() === '') break;
-        if (lines[i].includes('100%')) continue;
         
         const parts = lines[i].split('%').map(p => p.trim());
         if (parts.length === 2) {
@@ -260,7 +243,7 @@
       document.getElementById('connMedian').textContent = testData.connectionTimes.median;
       document.getElementById('connMax').textContent = testData.connectionTimes.max;
 
-      // Populate percentile table (excluding 100%)
+      // Populate percentile table
       const percentileTable = document.getElementById('percentileTable');
       Object.entries(testData.percentiles).forEach(([key, value]) => {
         const row = document.createElement('tr');
@@ -272,7 +255,7 @@
       document.getElementById('loading').style.display = 'none';
       document.getElementById('reportContent').style.display = 'block';
 
-      // Percentile Chart (excluding 100%)
+      // Percentile Chart
       const ctx = document.getElementById('percentileChart').getContext('2d');
       const labels = Object.keys(testData.percentiles);
       const data = Object.values(testData.percentiles);
@@ -289,75 +272,22 @@
             fill: false
           }]
         },
-               options: {
+        options: {
           responsive: true,
-          maintainAspectRatio: false,
           plugins: {
             title: {
               display: true,
-              text: 'Response Time Percentiles',
-              font: {
-                size: 18
-              }
+              text: 'Response Time Percentiles'
             },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `${context.dataset.label}: ${context.parsed.y} ms`;
-                }
-              }
-            },
-            legend: {
-              position: 'top',
-              labels: {
-                font: {
-                  size: 14
-                }
-              }
-            }
           },
           scales: {
             y: {
-              beginAtZero: false,
+              beginAtZero: true,
               title: {
                 display: true,
-                text: 'Response Time (ms)',
-                font: {
-                  size: 14
-                }
-              },
-              ticks: {
-                font: {
-                  size: 12
-                }
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: 'Percentiles',
-                font: {
-                  size: 14
-                }
-              },
-              ticks: {
-                font: {
-                  size: 12
-                }
+                text: 'Milliseconds'
               }
             }
-          },
-          elements: {
-            line: {
-              borderWidth: 3
-            },
-            point: {
-              radius: 4,
-              hoverRadius: 6
-            }
-          },
-          animation: {
-            duration: 1000
           }
         }
       });
