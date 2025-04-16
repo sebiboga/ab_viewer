@@ -3,10 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const exportBtn = document.getElementById('exportPdfBtn');
     
     exportBtn.addEventListener('click', () => {
-      // Get report element
       const element = document.getElementById('reportContent');
       
-      // PDF Options
       const options = {
         margin: 10,
         filename: `performance-report-${getFormattedDate()}.pdf`,
@@ -14,7 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         html2canvas: { 
           scale: 2,
           useCORS: true,
-          logging: false
+          logging: false,
+          scrollY: 0
         },
         jsPDF: { 
           unit: 'mm', 
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
       html2pdf().set(options).from(element).save();
     });
   
-    // Helper function for filename
     function getFormattedDate() {
       const now = new Date();
       return now.toISOString().split('T')[0];
