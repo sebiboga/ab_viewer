@@ -53,6 +53,20 @@
       padding: 20px;
       font-size: 1.2em;
     }
+    .pdf-button {
+      padding: 10px 20px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 20px;
+    }
+
+    .pdf-button:hover {
+      background: #45a049;
+    }
   </style>
 </head>
 <body>
@@ -121,6 +135,9 @@
     </div>
   </div>
 
+  <button id="exportPdfBtn" class="pdf-button">Export as PDF</button>
+
   <script src="report.js"></script>
+  <script src="PDF.js"></script>
 </body>
 </html>
