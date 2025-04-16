@@ -20,8 +20,8 @@ Completed 30000 requests
 Completed 35000 requests
 Completed 40000 requests
 Completed 45000 requests
-Completed 50000 requests
-Finished 50000 requests
+Completed 49999 requests
+Finished 48888 requests
 
 
 Server Software:        GitHub.com
