@@ -126,7 +126,6 @@ async function generateReport() {
 
   // Populate percentile table
   const percentileTable = document.getElementById('percentileTable');
-  percentileTable.innerHTML = ''; // Clear existing content
   Object.entries(testData.percentiles).forEach(([key, value]) => {
     const row = document.createElement('tr');
     row.innerHTML = `<th>${key}</th><td>${value} ms</td>`;
@@ -137,12 +136,12 @@ async function generateReport() {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('reportContent').style.display = 'block';
 
-  // Percentile Chart optimized for PDF export
+  // Percentile Chart with animations disabled for PDF compatibility
   const ctx = document.getElementById('percentileChart').getContext('2d');
   const labels = Object.keys(testData.percentiles);
   const data = Object.values(testData.percentiles);
 
-  // Store chart globally for PDF.js access
+  // Store chart globally for PDF.js access if needed
   window.myChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -152,25 +151,17 @@ async function generateReport() {
         data: data,
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,
-        fill: false,
-        backgroundColor: 'rgba(75, 192, 192, 0.2)'
+        fill: false
       }]
     },
     options: {
-      animation: false, // Disable animations for PDF export
+      animation: false, // <--- disables all animations [5][6][7]
       responsive: true,
-      maintainAspectRatio: false, // Allow custom sizing for landscape mode
       plugins: {
         title: {
           display: true,
-          text: 'Response Time Percentiles',
-          font: {
-            size: 16
-          }
+          text: 'Response Time Percentiles'
         },
-        legend: {
-          position: 'top'
-        }
       },
       scales: {
         y: {
@@ -179,37 +170,10 @@ async function generateReport() {
             display: true,
             text: 'Milliseconds'
           }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Percentile'
-          }
         }
       }
     }
   });
-
-  // Add CSS for better chart display in landscape PDF
-  const style = document.createElement('style');
-  style.textContent = `
-    .chart-container {
-      width: 100%;
-      height: 300px;
-      min-height: 300px;
-      position: relative;
-    }
-    @media print {
-      #reportContent {
-        width: 100%;
-        padding: 10mm;
-      }
-      .chart-container {
-        page-break-inside: avoid;
-      }
-    }
-  `;
-  document.head.appendChild(style);
 }
 
 // Start report generation
