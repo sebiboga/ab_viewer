@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filename: `performance-report-${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 1 },
         html2canvas: { 
-          scale: 2, // Reduced scale for better fit
+          scale: 3, // High resolution
           useCORS: true,
           logging: false,
           scrollY: 0
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'landscape' // <-- Critical change [1][8]
+          orientation: 'portrait' 
         }
       };
   
