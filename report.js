@@ -5,6 +5,8 @@ async function parseResults() {
     const text = await response.text();
     const lines = text.split('\n');
 
+    const versionMatch = text.match(/ApacheBench, Version (\d+\.\d+) <\$Revision: (\d+) \$>/);
+
     const parsedData = {
       startTime: (text.match(/^Test started at:\s*(.+)$/m) || [null, ''])[1].trim(),
       duration: extractValue(lines, 'Run time (sec):'),
@@ -25,7 +27,14 @@ async function parseResults() {
         median: extractConnectionTime(lines, 'median'),
         max: extractConnectionTime(lines, 'max')
       },
-      percentiles: extractPercentiles(lines)
+      percentiles: extractPercentiles(lines),
+      // Add ApacheBench version info here
+      serverInfo: {
+        apacheBench: {
+          version: versionMatch ? versionMatch[1] : 'Unknown',
+          revision: versionMatch ? versionMatch[2] : 'Unknown'
+        }
+      }
     };
 
     return parsedData;
@@ -36,14 +45,7 @@ async function parseResults() {
   }
 }
 
-function extractDateTimeValue(lines, pattern) {
-  for (const line of lines) {
-    if (line.includes(pattern)) {
-      return line.substring(line.indexOf(pattern) + pattern.length).trim();
-    }
-  }
-  return '';
-}
+
 
 function extractValue(lines, pattern, isSecondOccurrence = false) {
   let found = false;
@@ -103,6 +105,11 @@ function parseNumber(value) {
 async function generateReport() {
   const testData = await parseResults();
   if (!testData) return;
+
+
+
+  document.getElementById('version').textContent = testData.serverInfo.apacheBench.version;
+  document.getElementById('revision').textContent = testData.serverInfo.apacheBench.revision;
 
   document.getElementById('currentDate').textContent = new Date().toISOString();
   document.getElementById('targetUrl').textContent = testData.targetUrl;
