@@ -60,4 +60,3 @@ Percentage of the requests served within a certain time (ms)
   95%     14
   98%     16
   99%     17
- 100%   1576 (longest request)
