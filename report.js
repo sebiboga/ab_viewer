@@ -1,7 +1,7 @@
     // Parse the results file
     async function parseResults() {
         try {
-          const response = await fetch('results.txt');
+          const response = await fetch('https://github.com/sebiboga/ab/blob/main/results.txt');
           const text = await response.text();
           const lines = text.split('\n');
           
