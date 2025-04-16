@@ -6,7 +6,7 @@
           const lines = text.split('\n');
           
           const parsedData = {
-            startTime: extractValue(lines, 'Test started at:'),
+            startTime: startTime: extractDateTimeValue(lines, 'Test started at:'),
             duration: extractValue(lines, 'Run time (sec):'),
             concurrency: extractValue(lines, 'Workload (concurrency):'),
             targetUrl: text.match(/Target URL:\s*(.+)/)[1].trim(),
@@ -35,6 +35,16 @@
           return null;
         }
       }
+	  
+	  function extractDateTimeValue(lines, pattern) {
+       for (const line of lines) {
+        if (line.includes(pattern)) {
+          return line.substring(line.indexOf(pattern) + pattern.length).trim();
+            }
+          }
+         return '';
+       }
+
   
       // Helper functions for parsing
       function extractValue(lines, pattern, isSecondOccurrence = false) {
